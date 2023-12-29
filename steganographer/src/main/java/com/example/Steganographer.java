@@ -7,21 +7,26 @@ package com.example;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
 public class Steganographer {
-    ///////// Instance Data /////////
-    private String filePath;
-    private BufferedImage img;
-    private File imgFile;
-
-    private StringBuilder binaryMessage = new StringBuilder();
-    private ArrayList<Color> colors = new ArrayList<Color>();
-    private ArrayList<Color> finalColors = new ArrayList<Color>();
-
-    ///////// Methods /////////
+    /**
+     * Completes entire encoding process for an image.
+     * @param img The image to be edited
+     * @param message the message to be encoded in
+     * @return a new BufferedImage containing the message
+     * @throws IllegalArgumentException If either argument is null, or the string is empty
+     */
+    public BufferedImage encode(BufferedImage img, String message) throws IllegalArgumentException {
+        if (img == null || message == null || message.isEmpty()) throw new IllegalArgumentException(
+            "Arguments must not be null or empty"
+        );
+        BufferedImage copyImg = deepCopy(img);
+        StringBuilder binaryMessage = new StringBuilder(convertStringToBinary(message.toString()));
+        BufferedImage newImg = editRGBVals(copyImg, binaryMessage);
+        return newImg;
+    }
 
     /**
      * Edits the RGB values of the inputted image based on the ASCII translation of the inputted message.
@@ -29,7 +34,7 @@ public class Steganographer {
      * @param message StringBuilder representing the message to encode
      * @return BufferedImage object with updated RGB values
      */
-    public BufferedImage editRGBVals(BufferedImage img, StringBuilder message){
+    private BufferedImage editRGBVals(BufferedImage img, StringBuilder message) {
         for (int i = 0; i < img.getHeight(); i++) {
             for (int j = 0; j < img.getWidth(); j++) {
                 Color tempColor = new Color(img.getRGB(j, i));
@@ -57,7 +62,7 @@ public class Steganographer {
      * @param blockSize Size of each block of data, as an int
      * @return String containing data in inputBinary padded with zeros.
      */
-    public String padBlock(String inputBinary, int blockSize){
+    private String padBlock(String inputBinary, int blockSize){
         StringBuilder finalString = new StringBuilder();
 
         for (int i = 0; i < blockSize; i++) {
@@ -73,7 +78,7 @@ public class Steganographer {
      * @param MESSAGE String to be converted
      * @return Binary String of block size 8 containing the ASCII of the input
      */
-    public String ConvertStringToBinary(String MESSAGE) {
+    private String convertStringToBinary(String MESSAGE) {
         
         StringBuilder binaryResult = new StringBuilder();
         for (char c : MESSAGE.toCharArray()) {
@@ -90,7 +95,7 @@ public class Steganographer {
      * @param binary StringBuilder containing ASCII in 8 bit blocks
      * @return String containing the original message
      */
-    public String binaryToMessage(StringBuilder binary){
+    private String binaryToMessage(StringBuilder binary){
         int messageLength = (binary.length() / 8);
         char[] chars = new char[messageLength];
         StringBuilder decodedMessage = new StringBuilder();
@@ -109,7 +114,7 @@ public class Steganographer {
      * @param img BufferedImage object to grab message from
      * @return String containing binary message retrieved
      */
-    public String getMessageBack(BufferedImage img){
+    private String getMessageBack(BufferedImage img){
         StringBuilder message = new StringBuilder();
         for(int i = 0; i < img.getHeight(); i++){
             for(int j = 0; j < img.getWidth(); j++){
@@ -123,5 +128,12 @@ public class Steganographer {
             }
         }
         return message.toString();
+    }
+
+    private BufferedImage deepCopy(BufferedImage bi) {
+        ColorModel cm = bi.getColorModel();
+        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+        WritableRaster raster = bi.copyData(null);
+        return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
     }
 }

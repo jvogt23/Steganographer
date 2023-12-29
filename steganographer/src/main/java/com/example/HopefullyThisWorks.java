@@ -1,3 +1,5 @@
+package com.example;
+
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 import javax.imageio.ImageIO;
@@ -67,6 +69,7 @@ public class HopefullyThisWorks {
 
 
     //Convert the numbers for RGB to binary
+    //grabbed
     public static BufferedImage editRGBVals(BufferedImage img, StringBuilder message){
         for(int i = 0; i < img.getHeight(); i++){
             for(int j = 0; j < img.getWidth(); j++){
@@ -90,6 +93,7 @@ public class HopefullyThisWorks {
     }
 
     //get the message back
+    //grabbed
     public static String getMessageBack(BufferedImage img){
         StringBuilder message = new StringBuilder();
         for(int i = 0; i < img.getHeight(); i++){
@@ -122,7 +126,7 @@ public class HopefullyThisWorks {
     //good method
 
 
-
+    //grabbed
     public static String ConvertStringToBinary(String MESSAGE) {
         
         StringBuilder binaryResult = new StringBuilder();
@@ -148,18 +152,18 @@ public class HopefullyThisWorks {
         return finalString.toString();
     }
 
-        //Getting the characters of the message back from binary
-        public static String binaryToMessage(StringBuilder binary){
-            int messageLength = (binary.length() / 8);
-            char[] chars = new char[messageLength];
-            StringBuilder decodedMessage = new StringBuilder();
-            for(int i = 0; i < messageLength; i++){
-                chars[i] = (char) Integer.parseInt(binary.substring(0,8), 2);
-                binary.delete(0,8);
-            }
-    
-            decodedMessage.append(chars, 0, chars.length);
-    
-            return decodedMessage.toString();
+    //Getting the characters of the message back from binary
+    public static String binaryToMessage(StringBuilder binary){
+        int messageLength = (binary.length() / 8);
+        char[] chars = new char[messageLength];
+        StringBuilder decodedMessage = new StringBuilder();
+        for(int i = 0; i < messageLength; i++){
+            chars[i] = (char) Integer.parseInt(binary.substring(0,8), 2);
+            binary.delete(0,8);
         }
+
+        decodedMessage.append(chars, 0, chars.length);
+
+        return decodedMessage.toString();
+    }
 }
